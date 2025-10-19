@@ -2,6 +2,7 @@ import { useAuth } from "@clerk/clerk-expo";
 import { Redirect, Stack, Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { COLORS } from "../../constants/colors";
+import { StatusBar } from "react-native";
 
 const Tab_Layout = () => {
   const { isSignedIn ,isLoaded } = useAuth();
@@ -11,6 +12,8 @@ const Tab_Layout = () => {
   if (!isSignedIn) return <Redirect href={"/(auth)/sign-in"} />;
 
   return (
+    <>
+     <StatusBar backgroundColor={COLORS.primary} barStyle={"light-content"}/>
     <Tabs screenOptions={{ 
       headerShown: false, 
       tabBarActiveTintColor:COLORS.primary,
@@ -63,6 +66,7 @@ const Tab_Layout = () => {
         }}
       />
     </Tabs>
+    </>
   );
 };
 
