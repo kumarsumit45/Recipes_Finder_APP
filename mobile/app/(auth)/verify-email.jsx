@@ -15,6 +15,7 @@ import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
 import { useRouter } from "expo-router";
 
+
 const VerifyEmail = ({ email, onBack }) => {
   const router = useRouter();
 
@@ -25,6 +26,11 @@ const VerifyEmail = ({ email, onBack }) => {
   const [loading, setLoading] = useState(false);
 
   const handleVerification = async () => {
+    if (!code || code.length < 6) {
+      Alert.alert("Error", "Please enter a valid 6-digit code");
+      return;
+    }
+
     if (!isLoaded) return;
 
     setLoading(true);
@@ -34,17 +40,60 @@ const VerifyEmail = ({ email, onBack }) => {
         code,
       });
 
+      console.log("Sign up attempt status:", signUpAttempt.status);
+      console.log("Missing requirements:", signUpAttempt.missingRequirements);
+      console.log("Unverified fields:", signUpAttempt.unverifiedFields);
+
       if (signUpAttempt.status === "complete") {
         await setActive({ session: signUpAttempt.createdSessionId });
-        // setTimeout(() => {
+        console.log("Session activated, redirecting to tabs");
         router.replace("/(tabs)");
-      // }, 100);
+      } else if (signUpAttempt.status === "missing_requirements") {
+        // Check what's missing and complete the signup
+        console.log("Attempting to complete signup with missing requirements");
+
+        try {
+          const completeSignUp = await signUp.update({
+            unsafeMetadata: {}
+          });
+
+          if (completeSignUp.status === "complete") {
+            await setActive({ session: completeSignUp.createdSessionId });
+            console.log("Session activated after update, redirecting to tabs");
+            router.replace("/(tabs)");
+          } else {
+            Alert.alert("Error", `Please complete all required fields. Status: ${completeSignUp.status}`);
+          }
+        } catch (updateError) {
+          console.error("Update error:", updateError);
+          Alert.alert("Error", updateError.errors?.[0]?.message || "Failed to complete signup");
+        }
       } else {
-        Alert.alert("Error", "Verification failed. Please try again.");
-        console.log(JSON.stringify(signUpAttempt, null, 2));
+        Alert.alert("Error", `Verification status: ${signUpAttempt.status}. Please try again.`);
       }
     } catch (error) {
-      Alert.alert("Error", error.errors?.[0]?.message || "verification failed");
+      console.error("Verification error:", error);
+
+      // Check if already verified
+      if (error.message?.includes("already been verified")) {
+        // Try to complete the signup anyway
+        try {
+          if (signUp.status === "complete") {
+            await setActive({ session: signUp.createdSessionId });
+            router.replace("/(tabs)");
+          } else {
+            const updatedSignUp = await signUp.update({});
+            if (updatedSignUp.status === "complete") {
+              await setActive({ session: updatedSignUp.createdSessionId });
+              router.replace("/(tabs)");
+            }
+          }
+        } catch (recoveryError) {
+          Alert.alert("Error", "Email already verified. Please sign in instead.");
+        }
+      } else {
+        Alert.alert("Error", error.errors?.[0]?.message || error.message || "Verification failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -105,6 +154,9 @@ const VerifyEmail = ({ email, onBack }) => {
                 <Text style={authStyles.link}>Back to Sign Up</Text>
               </Text>
             </TouchableOpacity>
+
+           
+
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

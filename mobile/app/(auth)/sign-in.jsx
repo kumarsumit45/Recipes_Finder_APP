@@ -6,6 +6,7 @@ import { authStyles } from '../../assets/styles/auth.styles'
 import {Image} from "expo-image"
 import { COLORS } from '../../constants/colors'
 import {Ionicons} from "@expo/vector-icons"
+import Devloper_Info from '../../components/Devloper_Info'
 
 
 const Sign_IN_Screen = () => {
@@ -103,8 +104,8 @@ const Sign_IN_Screen = () => {
             style={authStyles.eyeButton}
             onPress={()=> setShowPassword(!showPassword)}
             >
-              <Ionicons 
-                name={showPassword ? "eyedrop-outline" : "eye-off-outline"}
+              <Ionicons
+                name={showPassword ? "eye-outline" : "eye-off-outline"}
                 size={22}
                 color={COLORS.textLight}
               />
@@ -132,7 +133,12 @@ const Sign_IN_Screen = () => {
             </Text>
 
           </TouchableOpacity>
+
+          <Devloper_Info/>
+
         </View>
+
+        
 
           
           

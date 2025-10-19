@@ -101,6 +101,22 @@ const Homepage = () => {
       }
       contentContainerStyle={homeStyles.scrollContent}
       >
+        <View style={[homeStyles.container,
+        {flex:1,alignItems:"center",
+          justifyContent:"center",
+          backgroundColor:COLORS.primary,
+          paddingBottom:10,
+          position:"static"
+
+        }]}>
+          <Text style={{
+            fontSize:25, 
+            fontWeight:"600",
+            color:COLORS.white,
+            paddingTop:5
+            }}>Welcome To Recipe Finder </Text>
+
+        </View>
         <View style={homeStyles.welcomeSection}>
 
         <Image 

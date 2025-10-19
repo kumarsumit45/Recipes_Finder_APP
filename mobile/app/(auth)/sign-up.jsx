@@ -16,6 +16,7 @@ import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import VerifyEmail from "./verify-email";
+import Devloper_Info from "../../components/Devloper_Info";
 
 const Sign_UP_Screen = () => {
   const router = useRouter();
@@ -31,8 +32,12 @@ const Sign_UP_Screen = () => {
       Alert.alert("Error", "Please fill all the fields");
       return;
     }
-    if (password.length < 6)
-      return Alert.alert("Password must be atleast 6 characters");
+    if (password.length < 6) {
+      Alert.alert("Error", "Password must be atleast 6 characters");
+      return;
+    }
+
+    if (!isLoaded) return;
 
     setLoading(true);
 
@@ -43,7 +48,8 @@ const Sign_UP_Screen = () => {
 
       setPendingverification(true);
     } catch (err) {
-      Alert.alert("Error", err.errors?.[0]?.message || "sign in failed");
+      console.error("Sign up error:", err);
+      Alert.alert("Error", err.errors?.[0]?.message || "Sign up failed");
     } finally {
       setLoading(false);
     }
@@ -100,7 +106,7 @@ const Sign_UP_Screen = () => {
                 onPress={() => setShowPassword(!showPassword)}
               >
                 <Ionicons
-                  name={showPassword ? "eyedrop-outline" : "eye-off-outline"}
+                  name={showPassword ? "eye-outline" : "eye-off-outline"}
                   size={22}
                   color={COLORS.textLight}
                 />
@@ -129,6 +135,9 @@ const Sign_UP_Screen = () => {
                 <Text style={authStyles.link}> Sign In</Text>
               </Text>
             </TouchableOpacity>
+
+            <Devloper_Info />
+            
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
