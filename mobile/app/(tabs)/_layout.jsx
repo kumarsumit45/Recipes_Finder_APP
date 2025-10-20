@@ -13,7 +13,11 @@ const Tab_Layout = () => {
 
   return (
     <>
-     <StatusBar backgroundColor={COLORS.primary} barStyle={"light-content"}/>
+     <StatusBar
+       backgroundColor={COLORS.primary}
+       barStyle="light-content"
+       translucent={false}
+     />
     <Tabs screenOptions={{ 
       headerShown: false, 
       tabBarActiveTintColor:COLORS.primary,
